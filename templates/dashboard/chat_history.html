@@ -1,0 +1,49 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block page_title %}Questions clients{% endblock %}
+
+{% block content %}
+<div class="container dash-page">
+  <div class="dash-title-row">
+    <h1>Questions des clients</h1>
+  </div>
+  <p class="muted">Les questions posées à l'assistant du site sur {% if user.is_superuser %}tous les biens{% else %}vos biens{% endif %}, et les questions générales. Utile pour repérer les informations qui manquent dans vos fiches.</p>
+
+  <nav class="filters" aria-label="Filtrer par statut">
+    <a href="?" {% if not current_status %}aria-current="true"{% endif %}>Toutes</a>
+    {% for value, label in statuses %}
+      <a href="?statut={{ value }}" {% if current_status == value %}aria-current="true"{% endif %}>{{ label }}</a>
+    {% endfor %}
+  </nav>
+
+  {% if page.object_list %}
+    <ul class="qa-list">
+      {% for m in page.object_list %}
+        <li class="qa">
+          <div class="qa-meta">
+            <span>{{ m.created_at|date:"j M Y, H:i" }}</span>
+            {% if m.property %}
+              <a href="{% url 'dashboard:edit' m.property.pk %}">{{ m.property.title }}</a>
+            {% else %}
+              <span>Question générale</span>
+            {% endif %}
+            {% if m.status == "out_of_scope" %}<span class="status status-wait">Hors sujet</span>{% elif m.status == "error" %}<span class="status status-todo">Erreur IA</span>{% endif %}
+          </div>
+          <p class="qa-q">« {{ m.question }} »</p>
+          <p class="qa-a">{{ m.answer }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if page.has_other_pages %}
+      <nav class="pagination">
+        {% if page.has_previous %}<a href="?page={{ page.previous_page_number }}{% if current_status %}&statut={{ current_status }}{% endif %}">← Plus récentes</a>{% endif %}
+        <span>Page {{ page.number }} / {{ page.paginator.num_pages }}</span>
+        {% if page.has_next %}<a href="?page={{ page.next_page_number }}{% if current_status %}&statut={{ current_status }}{% endif %}">Plus anciennes →</a>{% endif %}
+      </nav>
+    {% endif %}
+  {% else %}
+    <p class="empty-state">Aucune question pour le moment.</p>
+  {% endif %}
+</div>
+{% endblock %}

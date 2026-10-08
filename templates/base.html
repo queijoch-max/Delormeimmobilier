@@ -1,0 +1,53 @@
+{% load static %}<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ agency.name }} — agence immobilière à {{ agency.city }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Appartements et maisons à vendre et à louer à Nantes. Agence {{ agency.name }}.{% endblock %}">
+  <link rel="icon" href="{% static 'img/logo.svg' %}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body class="{% block body_class %}public{% endblock %}">
+  {% block header %}
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="{% url 'public:home' %}">
+        <img src="{% static 'img/logo.svg' %}" alt="" width="36" height="36">
+        <span>Delorme <em>Immobilier</em></span>
+      </a>
+      <nav class="header-nav">
+        <a href="{% url 'public:home' %}#biens">Nos biens</a>
+        <a class="header-phone" href="tel:{{ agency.phone|cut:' ' }}">{{ agency.phone }}</a>
+      </nav>
+    </div>
+  </header>
+  {% endblock %}
+
+  <main>
+    {% include "partials/messages.html" %}
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block footer %}
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <p class="footer-brand">Delorme <em>Immobilier</em></p>
+        <p>{{ agency.address }}</p>
+      </div>
+      <div>
+        <p><a href="tel:{{ agency.phone|cut:' ' }}">{{ agency.phone }}</a></p>
+        <p><a href="mailto:{{ agency.email }}">{{ agency.email }}</a></p>
+        <p><a href="{% url 'accounts:login' %}">Espace agents</a></p>
+      </div>
+    </div>
+  </footer>
+  {% endblock %}
+
+  {% block extra_body %}{% endblock %}
+</body>
+</html>

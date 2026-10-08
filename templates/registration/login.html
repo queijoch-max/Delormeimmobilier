@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Connexion — Espace agent{% endblock %}
+{% block body_class %}login-page{% endblock %}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="login-card">
+  <img src="{% static 'img/logo.svg' %}" alt="" width="56" height="56">
+  <h1>Espace agent</h1>
+  <p class="muted">Delorme Immobilier</p>
+
+  <form method="post" class="form">
+    {% csrf_token %}
+    {% if form.errors %}
+      <p class="form-errors">Identifiant ou mot de passe incorrect.</p>
+    {% endif %}
+    <div class="field">
+      <label for="id_username">Identifiant</label>
+      <input type="text" name="username" id="id_username" autocomplete="username" autocapitalize="none" required autofocus>
+    </div>
+    <div class="field">
+      <label for="id_password">Mot de passe</label>
+      <input type="password" name="password" id="id_password" autocomplete="current-password" required>
+    </div>
+    <input type="hidden" name="next" value="{{ next }}">
+    {% if demo_mode %}
+      <p class="help demo-hint">
+        Démo : identifiant <code>claire.martin</code>, <code>julien.robert</code>, <code>sophie.leroy</code>,
+        <code>thomas.garnier</code> ou <code>marc.delorme</code> (directeur).
+        Mot de passe : valeur de <code>DEMO_PASSWORD</code> dans le fichier <code>.env</code>.
+      </p>
+    {% endif %}
+    <button type="submit" class="btn btn-navy btn-large btn-block">Se connecter</button>
+  </form>
+  <a href="{% url 'public:home' %}" class="link-muted">← Retour au site</a>
+</div>
+{% endblock %}

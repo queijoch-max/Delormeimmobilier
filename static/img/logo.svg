@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Delorme Immobilier">
+  <rect width="64" height="64" rx="12" fill="#1B2A4A"/>
+  <path d="M14 33 L32 17 L50 33" fill="none" stroke="#C2A26B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M20 30 V48 H44 V30" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round"/>
+  <text x="32" y="45" text-anchor="middle" font-family="Georgia, serif" font-size="15" font-weight="600" fill="#FFFFFF">D</text>
+</svg>

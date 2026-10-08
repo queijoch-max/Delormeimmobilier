@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{# Tableau de bord : deux menus seulement, de gros boutons, des libellés explicites. #}
+
+{% block body_class %}dashboard{% endblock %}
+{% block title %}{% block page_title %}Espace agent{% endblock %} — {{ agency.name }}{% endblock %}
+
+{% block header %}
+<header class="dash-header">
+  <div class="container header-inner">
+    <a class="brand brand-light" href="{% url 'dashboard:home' %}">
+      <img src="{% static 'img/logo.svg' %}" alt="" width="32" height="32">
+      <span>Espace agent</span>
+    </a>
+    <nav class="dash-nav">
+      {% with name=request.resolver_match.view_name %}
+      <a href="{% url 'dashboard:home' %}" {% if name|slice:":9" == "dashboard" %}aria-current="page"{% endif %}>Mes biens</a>
+      <a href="{% url 'chat:history' %}" {% if name == "chat:history" %}aria-current="page"{% endif %}>Questions clients</a>
+      {% endwith %}
+    </nav>
+    <form method="post" action="{% url 'accounts:logout' %}" class="dash-user">
+      {% csrf_token %}
+      <span>{{ user.first_name|default:user.username }}</span>
+      <button type="submit" class="btn-link">Se déconnecter</button>
+    </form>
+  </div>
+</header>
+{% endblock %}
+
+{% block footer %}{% endblock %}

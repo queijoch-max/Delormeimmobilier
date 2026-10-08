@@ -1,0 +1,65 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block page_title %}Annonce — {{ property.title }}{% endblock %}
+
+{% block content %}
+<div class="container dash-page narrow">
+  <a href="{% url 'dashboard:home' %}" class="back-link">← Mes biens</a>
+  <h1>Annonce : {{ property.title }}</h1>
+  <p class="steps"><a class="step" href="{% url 'dashboard:edit' property.pk %}">1. Fiche du bien</a> <span class="step step-active">2. Annonce</span></p>
+
+  <div class="listing-status">
+    {% if property.is_published %}
+      <span class="status status-ok">En ligne</span>
+      <a href="{{ property.get_absolute_url }}" target="_blank" rel="noopener">Voir sur le site ↗</a>
+    {% else %}
+      <span class="status status-todo">Non publiée</span>
+    {% endif %}
+    {% if property.listing_generated_at %}
+      <span class="muted">Dernière génération IA : {{ property.listing_generated_at|date:"j F Y à H:i" }}</span>
+    {% endif %}
+  </div>
+
+  {# Formulaire séparé pour la génération : il n'envoie pas le texte en cours. #}
+  <form method="post" class="ai-box" data-loading-form>
+    {% csrf_token %}
+    <div>
+      <p class="ai-box-title">✦ Rédaction par l'IA</p>
+      <p class="muted">L'IA rédige l'annonce à partir de la fiche. {% if property.listing_text %}<strong>Le texte actuel sera remplacé.</strong>{% endif %}</p>
+    </div>
+    <button type="submit" name="action" value="generate" class="btn btn-gold" data-loading-label="Rédaction en cours…">
+      {% if property.listing_text %}Régénérer l'annonce{% else %}Générer l'annonce{% endif %}
+    </button>
+  </form>
+
+  <form method="post" class="form">
+    {% csrf_token %}
+    <div class="field">
+      <label for="{{ form.listing_text.id_for_label }}">Texte de l'annonce — relisez et corrigez avant de publier</label>
+      {{ form.listing_text }}
+      {% for error in form.listing_text.errors %}<p class="error">{{ error }}</p>{% endfor %}
+    </div>
+    <div class="form-actions">
+      <button type="submit" name="action" value="save" class="btn btn-outline btn-large">Enregistrer</button>
+      <button type="submit" name="action" value="publish" class="btn btn-navy btn-large">
+        {% if property.is_published %}Enregistrer et garder en ligne{% else %}Enregistrer et publier{% endif %}
+      </button>
+      {% if property.is_published %}
+        <button type="submit" name="action" value="unpublish" class="btn-link danger">Retirer du site</button>
+      {% endif %}
+    </div>
+  </form>
+</div>
+
+<script>
+  // Petit confort : pendant la génération (quelques secondes), on désactive le bouton.
+  document.querySelectorAll("[data-loading-form]").forEach((form) => {
+    form.addEventListener("submit", (event) => {
+      const button = event.submitter;
+      if (!button) return;
+      // Le bouton est désactivé juste après l'envoi, pour que sa valeur (action) parte bien.
+      setTimeout(() => { button.disabled = true; button.textContent = button.dataset.loadingLabel; }, 0);
+    });
+  });
+</script>
+{% endblock %}

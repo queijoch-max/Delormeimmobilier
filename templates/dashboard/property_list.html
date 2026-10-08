@@ -1,0 +1,47 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load humanize %}
+
+{% block page_title %}Mes biens{% endblock %}
+
+{% block content %}
+<div class="container dash-page">
+  <div class="dash-title-row">
+    <h1>{% if user.is_superuser %}Tous les biens de l'agence{% else %}Mes biens{% endif %}</h1>
+    <a href="{% url 'dashboard:create' %}" class="btn btn-gold btn-large">+ Ajouter un bien</a>
+  </div>
+
+  {% if properties %}
+    <ul class="dash-list">
+      {% for p in properties %}
+        <li class="dash-item">
+          <div class="dash-thumb">
+            {% with cover=p.cover %}
+              {% if cover %}<img src="{{ cover.image.url }}" alt="">{% else %}<div class="photo-placeholder"></div>{% endif %}
+            {% endwith %}
+          </div>
+          <div class="dash-item-body">
+            <p class="dash-item-title">{{ p.title }}</p>
+            <p class="muted">{{ p.neighborhood }} · {{ p.surface }} m² · {{ p.price|intcomma }} €{% if user.is_superuser %} · {{ p.agent }}{% endif %}</p>
+            {% if p.is_published %}
+              <span class="status status-ok">En ligne</span>
+            {% elif p.listing_text %}
+              <span class="status status-wait">Annonce à publier</span>
+            {% else %}
+              <span class="status status-todo">Annonce à rédiger</span>
+            {% endif %}
+          </div>
+          <div class="dash-item-actions">
+            <a href="{% url 'dashboard:listing' p.pk %}" class="btn btn-navy">Annonce</a>
+            <a href="{% url 'dashboard:edit' p.pk %}" class="btn btn-outline">Fiche</a>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="empty-state">
+      <p>Vous n'avez encore aucun bien.</p>
+      <a href="{% url 'dashboard:create' %}" class="btn btn-gold btn-large">Ajouter mon premier bien</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

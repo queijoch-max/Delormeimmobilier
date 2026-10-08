@@ -1,0 +1,33 @@
+{% load static %}
+{# Widget de chat : bouton flottant + panneau. La logique est dans static/js/chat.js. #}
+<div class="chat" data-chat data-endpoint="{% url 'chat:ask' %}"{% if property %} data-property-id="{{ property.pk }}"{% endif %}>
+  <button type="button" class="chat-toggle" data-chat-toggle aria-expanded="false" aria-controls="chat-panel">
+    <span aria-hidden="true">✦</span> Une question&nbsp;?
+  </button>
+
+  <section class="chat-panel" id="chat-panel" hidden aria-label="Assistant de l'agence">
+    <header class="chat-header">
+      <div>
+        <p class="chat-title">Assistant Delorme</p>
+        <p class="chat-subtitle">{% if property %}À propos de « {{ property.title }} »{% else %}Questions sur nos biens{% endif %}</p>
+      </div>
+      <button type="button" class="chat-close" data-chat-toggle aria-label="Fermer le chat">×</button>
+    </header>
+
+    <div class="chat-log" data-chat-log aria-live="polite">
+      <p class="chat-msg chat-msg-bot">
+        Bonjour&nbsp;! Je peux vous renseigner sur nos biens{% if property %}, et notamment sur celui-ci{% endif %}&nbsp;: surface, quartier, prix, points forts, visite…
+      </p>
+    </div>
+
+    <form class="chat-form" data-chat-form>
+      {% csrf_token %}
+      <label for="chat-input" class="visually-hidden">Votre question</label>
+      <input id="chat-input" name="question" type="text" maxlength="500" autocomplete="off"
+             placeholder="{% if property %}Ex. : y a-t-il un balcon ?{% else %}Ex. : un T3 vers Graslin ?{% endif %}" required>
+      <button type="submit" class="btn btn-gold">Envoyer</button>
+    </form>
+    <p class="chat-disclaimer">Réponses générées par IA à partir de nos annonces. Pour toute certitude, contactez l'agent.</p>
+  </section>
+</div>
+<script src="{% static 'js/chat.js' %}" defer></script>

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <p class="eyebrow">Agence immobilière à Nantes</p>
+    <h1>Trouvez le lieu<br>qui vous ressemble</h1>
+    <p class="hero-lead">Appartements et maisons à vendre ou à louer, sélectionnés par nos cinq agents du centre-ville.</p>
+  </div>
+</section>
+
+<section class="container search" aria-label="Rechercher un bien">
+  <form method="get" class="search-form">
+    {% for field in form %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+      </div>
+    {% endfor %}
+    <div class="search-actions">
+      <button type="submit" class="btn btn-navy">Rechercher</button>
+      {% if request.GET %}<a href="{% url 'public:home' %}" class="link-muted">Effacer</a>{% endif %}
+    </div>
+  </form>
+</section>
+
+<section class="container listing-grid-section" id="biens">
+  <h2 class="section-title">{{ properties|length }} bien{{ properties|length|pluralize }} disponible{{ properties|length|pluralize }}</h2>
+  {% if properties %}
+    <div class="grid">
+      {% for property in properties %}
+        {% include "partials/property_card.html" %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="empty">Aucun bien ne correspond à votre recherche pour le moment. Notre assistant ou nos agents peuvent vous aider.</p>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_body %}{% include "partials/chat_widget.html" %}{% endblock %}

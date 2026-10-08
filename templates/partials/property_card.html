@@ -1,0 +1,21 @@
+{% load humanize %}
+<article class="card">
+  <a href="{{ property.get_absolute_url }}" class="card-link">
+    <div class="card-photo">
+      {% with cover=property.cover %}
+        {% if cover %}
+          <img src="{{ cover.image.url }}" alt="{{ property.title }}" loading="lazy">
+        {% else %}
+          <div class="photo-placeholder" aria-hidden="true"></div>
+        {% endif %}
+      {% endwith %}
+      <span class="badge">{{ property.get_transaction_display }}</span>
+    </div>
+    <div class="card-body">
+      <p class="card-place">{{ property.neighborhood }} · {{ property.get_kind_display }}</p>
+      <h3 class="card-title">{{ property.title }}</h3>
+      <p class="card-facts">{{ property.surface }} m² · {{ property.rooms }} pièce{{ property.rooms|pluralize }}{% if property.bedrooms %} · {{ property.bedrooms }} chambre{{ property.bedrooms|pluralize }}{% endif %}</p>
+      <p class="card-price">{{ property.price|intcomma }} €{% if property.is_rental %}<small> / mois CC</small>{% endif %}</p>
+    </div>
+  </a>
+</article>

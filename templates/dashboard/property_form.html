@@ -1,0 +1,71 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block page_title %}{% if object %}Modifier la fiche{% else %}Nouveau bien{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container dash-page narrow">
+  <a href="{% url 'dashboard:home' %}" class="back-link">← Mes biens</a>
+  <h1>{% if object %}Fiche : {{ object.title }}{% else %}Nouveau bien{% endif %}</h1>
+  {% if object %}
+    <p class="steps"><span class="step step-active">1. Fiche du bien</span> <a class="step" href="{% url 'dashboard:listing' object.pk %}">2. Annonce</a></p>
+  {% else %}
+    <p class="muted">Remplissez la fiche, puis l'IA rédigera l'annonce pour vous.</p>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" class="form" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+
+    <fieldset>
+      <legend>Le bien</legend>
+      {% include "dashboard/_field.html" with field=form.title %}
+      <div class="form-row">
+        {% include "dashboard/_field.html" with field=form.kind %}
+        {% include "dashboard/_field.html" with field=form.transaction %}
+      </div>
+      <div class="form-row">
+        {% include "dashboard/_field.html" with field=form.price %}
+        {% include "dashboard/_field.html" with field=form.surface %}
+      </div>
+      <div class="form-row">
+        {% include "dashboard/_field.html" with field=form.rooms %}
+        {% include "dashboard/_field.html" with field=form.bedrooms %}
+      </div>
+      {% include "dashboard/_field.html" with field=form.neighborhood %}
+    </fieldset>
+
+    <fieldset>
+      <legend>Pour l'annonce</legend>
+      {% include "dashboard/_field.html" with field=form.highlights %}
+      {% include "dashboard/_field.html" with field=form.notes %}
+    </fieldset>
+
+    <fieldset>
+      <legend>Photos</legend>
+      {% if object and object.photos.all %}
+        <div class="photo-grid">
+          {% for photo in object.photos.all %}
+            <figure class="photo-tile">
+              <img src="{{ photo.image.url }}" alt="Photo {{ forloop.counter }}">
+              <button type="submit" form="delete-photo-{{ photo.pk }}" class="btn-link danger">Supprimer</button>
+            </figure>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% include "dashboard/_field.html" with field=form.new_photos %}
+    </fieldset>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-gold btn-large">{% if object %}Enregistrer la fiche{% else %}Créer la fiche{% endif %}</button>
+      {% if object %}<a href="{% url 'dashboard:delete' object.pk %}" class="btn-link danger">Supprimer ce bien</a>{% endif %}
+    </div>
+  </form>
+
+  {# Formulaires de suppression des photos, placés hors du formulaire principal (un <form> ne peut pas en contenir un autre). #}
+  {% if object %}
+    {% for photo in object.photos.all %}
+      <form id="delete-photo-{{ photo.pk }}" method="post" action="{% url 'dashboard:photo_delete' photo.pk %}" hidden>{% csrf_token %}</form>
+    {% endfor %}
+  {% endif %}
+</div>
+{% endblock %}

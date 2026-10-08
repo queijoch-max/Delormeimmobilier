@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}{{ property.title }} — {{ property.neighborhood }} | {{ agency.name }}{% endblock %}
+{% block meta_description %}{{ property.listing_text|truncatechars:155 }}{% endblock %}
+
+{% block content %}
+<article class="property">
+  <div class="gallery">
+    {% for photo in property.photos.all %}
+      <img src="{{ photo.image.url }}" alt="{{ property.title }} — photo {{ forloop.counter }}" {% if not forloop.first %}loading="lazy"{% endif %}>
+    {% empty %}
+      <div class="photo-placeholder photo-placeholder-large" aria-hidden="true"></div>
+    {% endfor %}
+  </div>
+
+  <div class="container property-layout">
+    <div class="property-main">
+      <a href="{% url 'public:home' %}" class="back-link">← Tous nos biens</a>
+      <p class="eyebrow">{{ property.get_kind_display }} · {{ property.get_transaction_display }} · {{ property.neighborhood }}</p>
+      <h1 class="property-title">{{ property.title }}</h1>
+      <p class="property-price">{{ property.price|intcomma }} €{% if property.is_rental %}<small> / mois charges comprises</small>{% endif %}</p>
+
+      <ul class="facts">
+        <li><strong>{{ property.surface }} m²</strong><span>Surface</span></li>
+        <li><strong>{{ property.rooms }}</strong><span>Pièce{{ property.rooms|pluralize }}</span></li>
+        <li><strong>{{ property.bedrooms }}</strong><span>Chambre{{ property.bedrooms|pluralize }}</span></li>
+      </ul>
+
+      <div class="listing-text">{{ property.listing_text|linebreaks }}</div>
+
+      {% if property.highlights_list %}
+        <h2 class="subheading">Points forts</h2>
+        <ul class="highlights">
+          {% for h in property.highlights_list %}<li>{{ h }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+
+    <aside class="agent-card">
+      <p class="eyebrow">Votre interlocuteur</p>
+      <p class="agent-name">{{ property.agent.get_full_name }}</p>
+      {% if property.agent.phone %}
+        <a class="btn btn-navy btn-block" href="tel:{{ property.agent.phone|cut:' ' }}">Appeler {{ property.agent.first_name }}</a>
+      {% endif %}
+      {% if property.agent.email %}
+        <a class="btn btn-outline btn-block" href="mailto:{{ property.agent.email }}?subject={{ property.title|urlencode }}">Demander une visite</a>
+      {% endif %}
+    </aside>
+  </div>
+</article>
+{% endblock %}
+
+{% block extra_body %}{% include "partials/chat_widget.html" %}{% endblock %}

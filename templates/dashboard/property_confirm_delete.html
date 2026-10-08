@@ -1,0 +1,15 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block page_title %}Supprimer {{ object.title }}{% endblock %}
+
+{% block content %}
+<div class="container dash-page narrow">
+  <h1>Supprimer ce bien&nbsp;?</h1>
+  <p>« <strong>{{ object.title }}</strong> » ({{ object.neighborhood }}) sera définitivement supprimé, avec ses photos et son annonce.</p>
+  <form method="post" class="form-actions">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger btn-large">Oui, supprimer</button>
+    <a href="{% url 'dashboard:edit' object.pk %}" class="btn btn-outline btn-large">Annuler</a>
+  </form>
+</div>
+{% endblock %}

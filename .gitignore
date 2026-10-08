@@ -1,0 +1,20 @@
+# Environnement et secrets
+.venv/
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.coverage
+htmlcov/
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+
+# Éditeurs / système
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
